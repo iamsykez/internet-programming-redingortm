@@ -1,0 +1,131 @@
+<div class="statistics-container">
+  <div class="header">
+    <h2>Statistics</h2>
+  </div>
+
+  @if (loading) {
+    <div class="loading">Loading statistics...</div>
+  } @else if (error) {
+    <div class="error">{{ error }}</div>
+  } @else {
+    <!-- Basic Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ totalMovies }}</div>
+        <div class="stat-label">Total Movies</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ totalActors }}</div>
+        <div class="stat-label">Total Actors</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ totalGenres }}</div>
+        <div class="stat-label">Total Genres</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ totalOscars }}</div>
+        <div class="stat-label">Total Oscars</div>
+      </div>
+    </div>
+
+    <!-- Detailed Statistics -->
+    <div class="stats-sections">
+      <!-- Oscars per Type -->
+      @if (oscarsPerType.length > 0) {
+        <div class="stats-section">
+          <h3>Oscars per Type</h3>
+          <div class="stats-list">
+            @for (oscar of oscarsPerType; track oscar.type) {
+              <div class="stats-item">
+                <span class="stats-label">{{ oscar.type }}:</span>
+                <span class="stats-value">{{ oscar.count }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Oscars per Genre -->
+      @if (oscarsPerGenre.length > 0) {
+        <div class="stats-section">
+          <h3>Oscars per Genre</h3>
+          <div class="stats-list">
+            @for (oscar of oscarsPerGenre; track oscar.genre) {
+              <div class="stats-item">
+                <span class="stats-label">{{ oscar.genre }}:</span>
+                <span class="stats-value">{{ oscar.count }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Movies per Decade -->
+      @if (moviesPerDecade.length > 0) {
+        <div class="stats-section">
+          <h3>Movies per Decade</h3>
+          <div class="stats-list">
+            @for (decade of moviesPerDecade; track decade.decade) {
+              <div class="stats-item">
+                <span class="stats-label">{{ decade.decade }}:</span>
+                <span class="stats-value">{{ decade.count }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Movies per Genre -->
+      @if (moviesPerGenre.length > 0) {
+        <div class="stats-section">
+          <h3>Movies per Genre</h3>
+          <div class="stats-list">
+            @for (genre of moviesPerGenre; track genre.genre) {
+              <div class="stats-item">
+                <span class="stats-label">{{ genre.genre }}:</span>
+                <span class="stats-value">{{ genre.count }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Missing Data Statistics -->
+      <div class="stats-section">
+        <h3>Data Completeness</h3>
+        <div class="stats-list">
+          <div class="stats-item">
+            <span class="stats-label">Actors without details:</span>
+            <span class="stats-value">{{ actorsWithoutDetails }}</span>
+          </div>
+          <div class="stats-item">
+            <span class="stats-label">Movies without details:</span>
+            <span class="stats-value">{{ moviesWithoutDetails }}</span>
+          </div>
+        </div>
+
+        @if (actorsWithoutDetailsList.length > 0) {
+          <div class="missing-data">
+            <h4>Actors Missing Details:</h4>
+            <div class="missing-list">
+              @for (actor of actorsWithoutDetailsList; track actor) {
+                <span class="missing-item">{{ actor }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (moviesWithoutDetailsList.length > 0) {
+          <div class="missing-data">
+            <h4>Movies Missing Details:</h4>
+            <div class="missing-list">
+              @for (movie of moviesWithoutDetailsList; track movie) {
+                <span class="missing-item">{{ movie }}</span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div> 

@@ -1,0 +1,14 @@
+<nav class="navbar">
+  <div class="container navbar-container">
+    <a routerLink="/movies" class="navbar-brand">
+      <h1>Movie Management</h1>
+    </a>
+    <ul class="navbar-nav">
+      @for (route of routes; track $index) {
+        <li class="nav-item">
+          <a [routerLink]="route.url" routerLinkActive="active" class="nav-link">{{route.linkName}}</a>
+        </li>
+      }
+    </ul>
+  </div>
+</nav> 

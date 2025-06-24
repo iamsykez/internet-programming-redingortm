@@ -1,0 +1,151 @@
+<div class="movie-details-container">
+  @if (loading) {
+    <div class="loading">Loading movie details...</div>
+  } @else if (error) {
+    <div class="error">{{ error }}</div>
+  } @else if (movie) {
+    <div class="movie-header">
+      <h2>{{ movie.title }}</h2>
+      <div class="actions">
+        <button class="btn btn-warning" [routerLink]="['/movies', movie.id, 'edit']">Edit</button>
+        <button class="btn btn-danger" (click)="deleteMovie()">Delete</button>
+        <button class="btn btn-primary" [routerLink]="['/movies', movie.id, 'cast', 'add']">Add Cast</button>
+      </div>
+    </div>
+
+    <div class="movie-content">
+      <div class="movie-info">
+        <div class="info-section">
+          <h3>Basic Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>ID:</label>
+              <span>{{ movie.id }}</span>
+            </div>
+            <div class="info-item">
+              <label>Title:</label>
+              <span>{{ movie.title }}</span>
+            </div>
+            <div class="info-item">
+              <label>Year:</label>
+              <span>{{ movie.year }}</span>
+            </div>
+            <div class="info-item">
+              <label>Director:</label>
+              <span>{{ movie.director }}</span>
+            </div>
+            <div class="info-item">
+              <label>Rating:</label>
+              <span>{{ movie.rating || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (movie.plot) {
+          <div class="info-section">
+            <h3>Plot</h3>
+            <p>{{ movie.plot }}</p>
+          </div>
+        }
+
+        @if (movie.genre && movie.genre.length > 0) {
+          <div class="info-section">
+            <h3>Genres</h3>
+            <div class="genre-list">
+              @for (genre of movie.genre; track genre) {
+                <span class="genre-tag">{{ genre }}</span>
+              }
+            </div>
+          </div>
+        }
+
+        @if (getOscarEntries().length > 0) {
+          <div class="info-section">
+            <h3>Oscars</h3>
+            <div class="oscar-list">
+              @for (oscar of getOscarEntries(); track oscar.type) {
+                <div class="oscar-item">
+                  <strong>{{ oscar.type }}:</strong> {{ oscar.recipient }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (movie.cast && movie.cast.length > 0) {
+          <div class="info-section">
+            <h3>Cast</h3>
+            <div class="cast-list">
+              @for (member of getSortedCast(); track member.actor) {
+                <div class="cast-item">
+                  @if (member.hasDetails && member.actorId) {
+                    <a [routerLink]="['/actor', member.actorId]" class="actor-link">
+                      <strong>{{ member.actor }}</strong>
+                    </a>
+                  } @else {
+                    <strong>{{ member.actor }}</strong>
+                  }
+                  as {{ member.character }}
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        <!-- Similar Movies Section -->
+        <div class="similar-movies-section">
+          @if (getSimilarMoviesByGenre().length > 0) {
+            <div class="info-section">
+              <h3>Similar Movies by Genre</h3>
+              <div class="similar-movies-list">
+                @for (similarMovie of getSimilarMoviesByGenre(); track similarMovie.id) {
+                  <div class="similar-movie-item">
+                    <a [routerLink]="['/movies', similarMovie.id]" class="movie-link">
+                      {{ similarMovie.title }} ({{ similarMovie.year }})
+                    </a>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (getSimilarMoviesByDirector().length > 0) {
+            <div class="info-section">
+              <h3>Other Movies by {{ movie.director }}</h3>
+              <div class="similar-movies-list">
+                @for (similarMovie of getSimilarMoviesByDirector(); track similarMovie.id) {
+                  <div class="similar-movie-item">
+                    <a [routerLink]="['/movies', similarMovie.id]" class="movie-link">
+                      {{ similarMovie.title }} ({{ similarMovie.year }})
+                    </a>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+
+          @if (getSimilarMoviesByActor().length > 0) {
+            <div class="info-section">
+              <h3>Other Movies with Cast Members</h3>
+              <div class="similar-movies-list">
+                @for (similarMovie of getSimilarMoviesByActor(); track similarMovie.id) {
+                  <div class="similar-movie-item">
+                    <a [routerLink]="['/movies', similarMovie.id]" class="movie-link">
+                      {{ similarMovie.title }} ({{ similarMovie.year }})
+                    </a>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="back-button">
+      <button class="btn btn-secondary" routerLink="/movies">Back to Movies</button>
+    </div>
+  } @else {
+    <div class="error">Movie not found</div>
+  }
+</div> 

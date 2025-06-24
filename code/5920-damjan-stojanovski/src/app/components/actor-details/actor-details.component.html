@@ -1,0 +1,70 @@
+<div class="actor-details-container">
+  @if (loading) {
+    <div class="loading">Loading actor details...</div>
+  } @else if (error) {
+    <div class="error">{{ error }}</div>
+  } @else if (actor) {
+    <div class="actor-header">
+      <h2>{{ actor.name }}</h2>
+    </div>
+
+    <div class="actor-content">
+      <div class="actor-info">
+        <div class="info-section">
+          <h3>Basic Information</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <label>ID:</label>
+              <span>{{ actor.id }}</span>
+            </div>
+            <div class="info-item">
+              <label>Name:</label>
+              <span>{{ actor.name }}</span>
+            </div>
+            @if (actor.birthdate) {
+              <div class="info-item">
+                <label>Birthdate:</label>
+                <span>{{ actor.birthdate }}</span>
+              </div>
+            }
+            @if (actor.height) {
+              <div class="info-item">
+                <label>Height:</label>
+                <span>{{ formatHeight(actor.height) }}</span>
+              </div>
+            }
+            @if (actor.nationality) {
+              <div class="info-item">
+                <label>Nationality:</label>
+                <span>{{ actor.nationality }}</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        @if (actor.notable_works && actor.notable_works.length > 0) {
+          <div class="info-section">
+            <h3>Notable Works</h3>
+            <div class="notable-works-list">
+              @for (work of getNotableWorksWithLinks(); track work.title) {
+                <div class="work-item">
+                  @if (work.hasDetails && work.movieId) {
+                    <a [routerLink]="['/movies', work.movieId]" class="movie-link">{{ work.title }}</a>
+                  } @else {
+                    <span class="movie-title">{{ work.title }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="back-button">
+      <button class="btn btn-secondary" (click)="goBack()">Back to Movies</button>
+    </div>
+  } @else {
+    <div class="error">Actor not found</div>
+  }
+</div> 

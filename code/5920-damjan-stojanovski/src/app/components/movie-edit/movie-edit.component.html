@@ -1,0 +1,221 @@
+<div class="movie-edit-container">
+  <div class="header">
+    <h2>Edit Movie</h2>
+    @if (movie) {
+      <p class="movie-title">{{ movie.title }}</p>
+    }
+  </div>
+
+  @if (error) {
+    <div class="error">{{ error }}</div>
+  }
+
+  @if (loading) {
+    <div class="loading">Loading movie data...</div>
+  } @else if (movie) {
+    <form class="movie-form" (ngSubmit)="saveMovie()">
+      <!-- Basic Information -->
+      <div class="form-section">
+        <h3>Basic Information</h3>
+        
+        <div class="form-group">
+          <label for="id">ID</label>
+          <input 
+            type="number" 
+            id="id" 
+            [value]="movie.id" 
+            readonly
+            class="readonly"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="title">Title *</label>
+          <input 
+            type="text" 
+            id="title" 
+            [(ngModel)]="movie.title" 
+            name="title"
+            required
+            placeholder="Enter movie title"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="year">Year *</label>
+          <input 
+            type="number" 
+            id="year" 
+            [(ngModel)]="movie.year" 
+            name="year"
+            required
+            min="1900"
+            max="2030"
+            placeholder="Enter release year"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="director">Director *</label>
+          <input 
+            type="text" 
+            id="director" 
+            [(ngModel)]="movie.director" 
+            name="director"
+            required
+            placeholder="Enter director name"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <input 
+            type="number" 
+            id="rating" 
+            [(ngModel)]="movie.rating" 
+            name="rating"
+            min="0"
+            max="10"
+            step="0.1"
+            placeholder="Enter rating (0-10)"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="plot">Plot</label>
+          <textarea 
+            id="plot" 
+            [(ngModel)]="movie.plot" 
+            name="plot"
+            rows="4"
+            placeholder="Enter movie plot description"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Genres -->
+      <div class="form-section">
+        <h3>Genres</h3>
+        
+        <div class="form-group">
+          <label for="genreSelect">Add Genre</label>
+          <div class="genre-selector">
+            <select id="genreSelect" #genreSelect>
+              <option value="">Select a genre</option>
+              @for (genre of availableGenres; track genre) {
+                <option [value]="genre">{{ genre }}</option>
+              }
+            </select>
+            <button type="button" class="btn btn-secondary" (click)="addGenre(genreSelect.value); genreSelect.value = ''">
+              Add
+            </button>
+          </div>
+        </div>
+
+        @if (selectedGenres.length > 0) {
+          <div class="selected-genres">
+            <label>Selected Genres:</label>
+            <div class="genre-list">
+              @for (genre of selectedGenres; track genre) {
+                <span class="genre-tag">
+                  {{ genre }}
+                  <button type="button" class="remove-btn" (click)="removeGenre(genre)">×</button>
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Cast -->
+      <div class="form-section">
+        <h3>Cast</h3>
+        
+        <div class="form-group">
+          <label>Add Cast Member</label>
+          <div class="cast-input">
+            <input 
+              type="text" 
+              [(ngModel)]="newCastMember.actor" 
+              name="actor"
+              placeholder="Actor name"
+            >
+            <input 
+              type="text" 
+              [(ngModel)]="newCastMember.character" 
+              name="character"
+              placeholder="Character name"
+            >
+            <button type="button" class="btn btn-secondary" (click)="addCastMember()">
+              Add
+            </button>
+          </div>
+        </div>
+
+        @if (movie.cast && movie.cast.length > 0) {
+          <div class="cast-list">
+            <label>Cast Members:</label>
+            @for (member of movie.cast; track $index) {
+              <div class="cast-item">
+                <strong>{{ member.actor }}</strong> as {{ member.character }}
+                <button type="button" class="remove-btn" (click)="removeCastMember($index)">×</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Oscars -->
+      <div class="form-section">
+        <h3>Oscars</h3>
+        
+        <div class="form-group">
+          <label>Add Oscar</label>
+          <div class="oscar-input">
+            <input 
+              type="text" 
+              [(ngModel)]="newOscar.type" 
+              name="oscarType"
+              placeholder="Oscar type (e.g., bestPicture)"
+            >
+            <input 
+              type="text" 
+              [(ngModel)]="newOscar.recipient" 
+              name="oscarRecipient"
+              placeholder="Recipient name"
+            >
+            <button type="button" class="btn btn-secondary" (click)="addOscar()">
+              Add
+            </button>
+          </div>
+        </div>
+
+        @if (getOscarEntries().length > 0) {
+          <div class="oscar-list">
+            <label>Oscars:</label>
+            @for (oscar of getOscarEntries(); track oscar.type) {
+              <div class="oscar-item">
+                <strong>{{ oscar.type }}:</strong> {{ oscar.recipient }}
+                <button type="button" class="remove-btn" (click)="removeOscar(getOriginalOscarKey(oscar.type))">×</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="!isFormValid() || saving">
+          @if (saving) {
+            Saving...
+          } @else {
+            Save Changes
+          }
+        </button>
+      </div>
+    </form>
+  } @else {
+    <div class="error">Movie not found</div>
+  }
+</div> 
